@@ -1,0 +1,17 @@
+{% extends "app/base_painel.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'painel_equipe' %}">← Voltar à equipe</a>
+<div class="form-card">
+    <h2>{{ titulo }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="campo"><label for="nome">Nome</label><input type="text" id="nome" name="nome" value="{{ integrante.nome|default:'' }}" required></div>
+        <div class="campo"><label for="cargo">Cargo</label><input type="text" id="cargo" name="cargo" value="{{ integrante.cargo|default:'' }}" required></div>
+        <div class="campo"><label for="biografia">Biografia</label><textarea id="biografia" name="biografia" rows="5">{{ integrante.biografia|default:'' }}</textarea></div>
+        <div class="campo"><label for="foto_url">Foto (URL)</label><input type="url" id="foto_url" name="foto_url" value="{{ integrante.foto_url|default:'' }}"></div>
+        <button type="submit">Salvar</button>
+        <a class="btn btn-ghost" href="{% url 'painel_equipe' %}">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

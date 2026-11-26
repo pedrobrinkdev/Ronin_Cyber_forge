@@ -1,0 +1,10 @@
+Olá, {{ user.get_username }}!
+
+Recebemos um pedido para redefinir a senha da sua conta na Ronin Cyber Forge.
+Acesse o link abaixo para criar uma nova senha:
+
+{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+
+Se você não fez esse pedido, ignore este e-mail.
+
+— Ronin Cyber Forge

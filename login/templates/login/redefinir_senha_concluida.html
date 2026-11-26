@@ -1,0 +1,9 @@
+{% extends "app/base.html" %}
+{% block titulo %}Senha redefinida{% endblock %}
+{% block conteudo %}
+<div class="form-card">
+    <h2>Senha redefinida!</h2>
+    <p>Sua senha foi alterada com sucesso.</p>
+    <div class="links-form"><a class="btn" href="{% url 'login' %}">Entrar</a></div>
+</div>
+{% endblock %}

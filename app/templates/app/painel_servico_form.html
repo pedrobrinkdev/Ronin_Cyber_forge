@@ -1,0 +1,14 @@
+{% extends "app/base_painel.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'painel_servicos' %}">← Voltar aos serviços</a>
+<div class="form-card">
+    <h2>{{ titulo }}</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Salvar</button>
+        <a class="btn btn-ghost" href="{% url 'painel_servicos' %}">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

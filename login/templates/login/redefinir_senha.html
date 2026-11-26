@@ -1,0 +1,14 @@
+{% extends "app/base.html" %}
+{% block titulo %}Nova Senha{% endblock %}
+{% block conteudo %}
+<div class="form-card">
+    {% if validlink %}
+        <h2>Criar nova senha</h2>
+        <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Salvar nova senha</button></form>
+    {% else %}
+        <h2>Link inválido</h2>
+        <p>Esse link de recuperação expirou ou já foi usado.</p>
+        <div class="links-form"><a href="{% url 'password_reset' %}">Solicitar um novo link</a></div>
+    {% endif %}
+</div>
+{% endblock %}

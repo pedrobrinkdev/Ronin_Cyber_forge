@@ -1,0 +1,105 @@
+{% extends "app/base_painel.html" %}
+{% load static %}
+{% block titulo %}Relatórios{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'dashboard' %}">← Voltar ao dashboard</a>
+<h2>Relatórios de serviços</h2>
+
+<form method="get" class="filtros-rel" id="form-relatorio">
+    <input type="hidden" name="enviado" value="1">
+    <fieldset>
+        <legend>Categorias <small>(marque uma, várias, todas ou nenhuma)</small></legend>
+        <div class="checks">
+            {% for o in opcoes %}
+            <label class="check"><input type="checkbox" name="cats" value="{{ o.valor }}" {% if o.marcada %}checked{% endif %}><span>{{ o.nome }}</span></label>
+            {% empty %}<span class="sub">Nenhuma categoria cadastrada ainda.</span>{% endfor %}
+        </div>
+        <div class="atalhos">
+            <button type="button" class="btn btn-sm btn-ghost" data-marcar="cats" data-valor="1">Marcar todas</button>
+            <button type="button" class="btn btn-sm btn-ghost" data-marcar="cats" data-valor="0">Limpar (nenhuma)</button>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>Gráficos <small>(escolha quais mostrar)</small></legend>
+        <div class="checks">
+            {% for g in graficos_opcoes %}
+            <label class="check"><input type="checkbox" name="graficos" value="{{ g.chave }}" {% if g.marcado %}checked{% endif %}><span>{{ g.nome }}</span></label>
+            {% endfor %}
+        </div>
+        <div class="atalhos">
+            <button type="button" class="btn btn-sm btn-ghost" data-marcar="graficos" data-valor="1">Todos</button>
+            <button type="button" class="btn btn-sm btn-ghost" data-marcar="graficos" data-valor="0">Nenhum</button>
+        </div>
+    </fieldset>
+    <div class="aplicar"><button type="submit">Aplicar filtro</button> <a class="btn btn-ghost btn-sm" href="{% url 'painel_relatorios' %}">Restaurar padrão</a></div>
+</form>
+
+{% if sem_categoria_marcada %}
+<div class="vazio">Nenhuma categoria selecionada. Marque ao menos uma categoria para ver os dados.</div>
+{% else %}
+<div class="stats">
+    <div class="stat"><span>Total de serviços</span><strong>{{ kpis.total }}</strong></div>
+    <div class="stat"><span>Ativos</span><strong>{{ kpis.ativos }}</strong></div>
+    <div class="stat"><span>Inativos</span><strong>{{ kpis.inativos }}</strong></div>
+    <div class="stat"><span>Preço médio</span><strong>R$ {{ kpis.media|default:0|floatformat:2 }}</strong></div>
+    <div class="stat"><span>Maior preço</span><strong>R$ {{ kpis.maior|default:0|floatformat:2 }}</strong></div>
+    <div class="stat"><span>Menor preço</span><strong>R$ {{ kpis.menor|default:0|floatformat:2 }}</strong></div>
+    <div class="stat"><span>Soma do catálogo</span><strong>R$ {{ kpis.soma|default:0|floatformat:2 }}</strong></div>
+</div>
+
+{% if sem_grafico_marcado %}
+<div class="vazio">Nenhum gráfico selecionado. Marque ao menos um em "Gráficos".</div>
+{% else %}
+<div class="graficos">
+    {% if mostrar.categoria %}<div class="grafico"><h3>Serviços por categoria</h3><canvas id="gCategoria"></canvas></div>{% endif %}
+    {% if mostrar.faixas %}<div class="grafico"><h3>Faixas de preço</h3><canvas id="gFaixas"></canvas></div>{% endif %}
+    {% if mostrar.media %}<div class="grafico"><h3>Preço médio por categoria (R$)</h3><canvas id="gMedia"></canvas></div>{% endif %}
+    {% if mostrar.situacao %}<div class="grafico"><h3>Ativos x inativos</h3><canvas id="gSituacao"></canvas></div>{% endif %}
+</div>
+{% endif %}
+
+<h3 style="margin-bottom:12px">Resumo por categoria</h3>
+<div class="tabela-wrap"><table>
+    <thead><tr><th>Categoria</th><th>Quantidade</th><th>Preço médio</th></tr></thead>
+    <tbody>
+    {% for l in linhas %}<tr><td>{{ l.nome }}</td><td>{{ l.qtd }}</td><td>R$ {{ l.media|floatformat:2 }}</td></tr>
+    {% empty %}<tr><td colspan="3"><div class="vazio">Sem dados.</div></td></tr>{% endfor %}
+    </tbody>
+</table></div>
+{% endif %}
+{{ dados|json_script:"dados-relatorio" }}
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/chart.umd.min.js' %}"></script>
+<script>
+(function () {
+  var form = document.getElementById('form-relatorio');
+  // atalhos "marcar todas / limpar" e envio automático ao mudar qualquer caixa
+  form.querySelectorAll('[data-marcar]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      form.querySelectorAll('input[name="' + b.dataset.marcar + '"]').forEach(function (c) { c.checked = b.dataset.valor === '1'; });
+      form.submit();
+    });
+  });
+  form.addEventListener('change', function () { form.submit(); });
+
+  if (typeof Chart === 'undefined') return;
+  var d = JSON.parse(document.getElementById('dados-relatorio').textContent);
+  var roxo = '#a855ff', verm = '#ff2d55', roxoE = '#6d28d9', vermE = '#b3122f', rosa = '#ff6ec7';
+  Chart.defaults.color = '#c9bde3';
+  Chart.defaults.font.family = 'Rajdhani, sans-serif';
+  Chart.defaults.borderColor = '#2a1a47';
+  function el(id) { return document.getElementById(id); }
+  if (el('gCategoria')) new Chart(el('gCategoria'), {type: 'bar',
+    data: {labels: d.categorias, datasets: [{label: 'Serviços', data: d.qtd_categoria, backgroundColor: roxo}]},
+    options: {plugins: {legend: {display: false}}, scales: {y: {beginAtZero: true, ticks: {precision: 0}}}}});
+  if (el('gFaixas')) new Chart(el('gFaixas'), {type: 'doughnut',
+    data: {labels: d.faixas_nomes, datasets: [{data: d.faixas_valores, backgroundColor: [roxo, verm, roxoE], borderColor: '#06040b'}]}});
+  if (el('gMedia')) new Chart(el('gMedia'), {type: 'bar',
+    data: {labels: d.categorias, datasets: [{label: 'R$', data: d.media_categoria, backgroundColor: verm}]},
+    options: {plugins: {legend: {display: false}}, scales: {y: {beginAtZero: true}}}});
+  if (el('gSituacao')) new Chart(el('gSituacao'), {type: 'pie',
+    data: {labels: ['Ativos', 'Inativos'], datasets: [{data: d.situacao, backgroundColor: [roxo, vermE], borderColor: '#06040b'}]}});
+})();
+</script>
+{% endblock %}

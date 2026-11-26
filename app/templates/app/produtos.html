@@ -1,0 +1,33 @@
+{% extends "app/base.html" %}
+{% block titulo %}Produtos{% endblock %}
+{% block conteudo %}
+<h2>Arsenal da forja</h2>
+<div class="filtro-tipos">
+    <a class="chip {% if not tipo %}ativo{% endif %}" href="{% url 'produtos' %}">Todos</a>
+    {% for valor, nome in tipos %}<a class="chip {% if tipo == valor %}ativo{% endif %}" href="?tipo={{ valor }}">{{ nome }}</a>{% endfor %}
+</div>
+<div class="grade">
+    {% for p in produtos %}{% include "app/_card_produto.html" %}
+    {% empty %}<div class="vazio">Nenhuma lâmina encontrada nessa categoria.</div>{% endfor %}
+</div>
+
+<h2 class="titulo-secao">Armas do mundo — catálogo externo</h2>
+<p class="sub">Dados em tempo real da API pública Open5e. Itens apenas para consulta (referência de arsenal), sem compra.</p>
+{% if externos %}
+<div class="grade">
+    {% for a in externos %}
+    <article class="arma-api">
+        <h3>{{ a.nome }}</h3>
+        <dl>
+            {% if a.dano %}<dt>Dano</dt><dd>{{ a.dano }}</dd>{% endif %}
+            {% if a.peso %}<dt>Peso</dt><dd>{{ a.peso }}</dd>{% endif %}
+            {% if a.custo %}<dt>Custo</dt><dd>{{ a.custo }}</dd>{% endif %}
+            <dt>Fonte</dt><dd>{{ a.fonte }}</dd>
+        </dl>
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<div class="vazio">{% if api_ok %}A API não retornou itens.{% else %}Catálogo externo indisponível no momento. Tente novamente mais tarde.{% endif %}</div>
+{% endif %}
+{% endblock %}

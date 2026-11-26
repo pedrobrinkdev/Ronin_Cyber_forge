@@ -1,0 +1,9 @@
+{% extends "app/base.html" %}
+{% block titulo %}E-mail enviado{% endblock %}
+{% block conteudo %}
+<div class="form-card">
+    <h2>Confira seu e-mail</h2>
+    <p>Se existir uma conta com o e-mail informado, enviamos as instruções para redefinir a senha. Verifique também a caixa de spam.</p>
+    <div class="links-form"><a href="{% url 'login' %}">Voltar ao login</a></div>
+</div>
+{% endblock %}

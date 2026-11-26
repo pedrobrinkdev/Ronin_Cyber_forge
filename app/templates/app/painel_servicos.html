@@ -1,0 +1,67 @@
+{% extends "app/base_painel.html" %}
+{% block titulo %}Serviços{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'dashboard' %}">← Voltar ao dashboard</a>
+<div class="painel-topo">
+    <h2>Serviços da forja</h2>
+    {% if pode_editar %}<a class="btn btn-red" href="{% url 'add_servico' %}">+ Novo serviço</a>{% endif %}
+</div>
+
+<div class="stats">
+    <div class="stat"><span>Encontrados</span><strong>{{ stats.total }}</strong></div>
+    <div class="stat"><span>Ativos</span><strong>{{ stats.ativos }}</strong></div>
+    <div class="stat"><span>Preço médio</span><strong>R$ {{ stats.media|default:0|floatformat:2 }}</strong></div>
+    <div class="stat"><span>Menor preço</span><strong>R$ {{ stats.menor|default:0|floatformat:2 }}</strong></div>
+    <div class="stat"><span>Maior preço</span><strong>R$ {{ stats.maior|default:0|floatformat:2 }}</strong></div>
+</div>
+
+<form method="get" class="filtros">
+    <div class="campo"><label for="busca">Buscar</label><input type="search" id="busca" name="busca" value="{{ filtros.busca }}" placeholder="Nome ou descrição"></div>
+    <div class="campo"><label for="categoria">Categoria</label>
+        <select id="categoria" name="categoria"><option value="">Todas</option>
+            {% for c in categorias %}<option value="{{ c.id }}" {% if filtros.categoria == c.id|stringformat:"s" %}selected{% endif %}>{{ c.nome }}</option>{% endfor %}
+        </select></div>
+    <div class="campo"><label for="preco">Faixa de preço</label>
+        <select id="preco" name="preco">
+            <option value="">Todas</option>
+            <option value="baixo" {% if filtros.preco == "baixo" %}selected{% endif %}>Até R$ 150</option>
+            <option value="medio" {% if filtros.preco == "medio" %}selected{% endif %}>R$ 150 a R$ 400</option>
+            <option value="alto" {% if filtros.preco == "alto" %}selected{% endif %}>Acima de R$ 400</option>
+        </select></div>
+    <div class="campo"><label for="situacao">Situação</label>
+        <select id="situacao" name="situacao">
+            <option value="">Todas</option>
+            <option value="ativos" {% if filtros.situacao == "ativos" %}selected{% endif %}>Ativos</option>
+            <option value="inativos" {% if filtros.situacao == "inativos" %}selected{% endif %}>Inativos</option>
+        </select></div>
+    <div class="campo"><label for="ordem">Ordenar por</label>
+        <select id="ordem" name="ordem">
+            <option value="nome" {% if filtros.ordem == "nome" %}selected{% endif %}>Nome (A-Z)</option>
+            <option value="menor" {% if filtros.ordem == "menor" %}selected{% endif %}>Menor preço</option>
+            <option value="maior" {% if filtros.ordem == "maior" %}selected{% endif %}>Maior preço</option>
+            <option value="recentes" {% if filtros.ordem == "recentes" %}selected{% endif %}>Mais recentes</option>
+        </select></div>
+    <div class="campo"><button type="submit">Filtrar</button> <a class="btn btn-ghost btn-sm" href="{% url 'painel_servicos' %}">Limpar</a></div>
+</form>
+
+<div class="tabela-wrap"><table>
+    <thead><tr><th>Imagem</th><th>Serviço</th><th>Categoria</th><th>Preço</th><th>Situação</th>{% if pode_editar %}<th>Ações</th>{% endif %}</tr></thead>
+    <tbody>
+    {% for s in servicos %}
+        <tr>
+            <td>{% if s.imagem %}<img class="mini" src="{{ s.imagem.url }}" alt="{{ s.nome }}">{% else %}—{% endif %}</td>
+            <td><strong>{{ s.nome }}</strong><br><small style="color:var(--muted)">{{ s.descricao|truncatechars:90 }}</small></td>
+            <td>{{ s.categoria.nome|default:"—" }}</td>
+            <td>R$ {{ s.preco }}</td>
+            <td>{% if s.ativo %}<span class="tag on">Ativo</span>{% else %}<span class="tag off">Inativo</span>{% endif %}</td>
+            {% if pode_editar %}
+            <td class="acoes">
+                <a class="btn btn-sm" href="{% url 'edit_servico' s.id %}">Editar</a>
+                <form method="post" action="{% url 'del_servico' s.id %}" class="inline" data-confirmar="Excluir o serviço {{ s.nome|escapejs }}?">{% csrf_token %}<button type="submit" class="btn btn-sm btn-red">Excluir</button></form>
+            </td>
+            {% endif %}
+        </tr>
+    {% empty %}<tr><td colspan="6"><div class="vazio">Nenhum serviço encontrado com esses filtros.</div></td></tr>{% endfor %}
+    </tbody>
+</table></div>
+{% endblock %}

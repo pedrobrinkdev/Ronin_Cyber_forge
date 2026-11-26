@@ -1,0 +1,15 @@
+{% extends "app/base_painel.html" %}
+{% block titulo %}Editar Perfil{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'dashboard' %}">← Voltar ao dashboard</a>
+<div class="form-card">
+    <h2>Editar perfil</h2>
+    <p class="sub">Usuário: <strong>{{ user.username }}</strong> · Data de cadastro: {{ user.date_joined|date:"d/m/Y" }}</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Salvar alterações</button>
+    </form>
+    <div class="links-form"><a href="{% url 'alterar_senha' %}">Alterar senha</a></div>
+</div>
+{% endblock %}

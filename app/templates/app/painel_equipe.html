@@ -1,0 +1,21 @@
+{% extends "app/base_painel.html" %}
+{% block titulo %}Equipe{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'dashboard' %}">← Voltar ao dashboard</a>
+<div class="painel-topo"><h2>Equipe da forja</h2><a class="btn btn-red" href="{% url 'add_integrante' %}">+ Novo integrante</a></div>
+<p class="sub">Dados armazenados no banco remoto (Supabase).</p>
+<div class="grade">
+    {% for i in integrantes %}
+    <article class="integrante">
+        {% if i.foto_url %}<img src="{{ i.foto_url }}" alt="Foto de {{ i.nome }}">{% else %}<div class="avatar">🥷</div>{% endif %}
+        <h3>{{ i.nome }}</h3>
+        <div class="cargo">{{ i.cargo }}</div>
+        <p>{{ i.biografia }}</p>
+        <div style="margin-top:14px">
+            <a class="btn btn-sm" href="{% url 'edit_integrante' i.id %}">Editar</a>
+            <form method="post" action="{% url 'del_integrante' i.id %}" class="inline" data-confirmar="Excluir {{ i.nome|escapejs }} da equipe?">{% csrf_token %}<button type="submit" class="btn btn-sm btn-red">Excluir</button></form>
+        </div>
+    </article>
+    {% empty %}<div class="vazio">Nenhum integrante cadastrado.</div>{% endfor %}
+</div>
+{% endblock %}

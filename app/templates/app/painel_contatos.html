@@ -1,0 +1,21 @@
+{% extends "app/base_painel.html" %}
+{% block titulo %}Contatos{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'dashboard' %}">← Voltar ao dashboard</a>
+<div class="painel-topo"><h2>Mensagens recebidas</h2><span class="tag on">{{ contatos|length }} mensagem(ns)</span></div>
+<div class="tabela-wrap"><table>
+    <thead><tr><th>Data</th><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Mensagem</th><th>Ação</th></tr></thead>
+    <tbody>
+    {% for c in contatos %}
+        <tr>
+            <td>{{ c.criado_em|date:"d/m/Y H:i" }}</td>
+            <td>{{ c.nome }}</td>
+            <td><a href="mailto:{{ c.email }}">{{ c.email }}</a></td>
+            <td>{{ c.telefone|default:"—" }}</td>
+            <td style="min-width:260px">{{ c.mensagem|linebreaksbr }}</td>
+            <td class="acoes"><form method="post" action="{% url 'del_contato' c.id %}" class="inline" data-confirmar="Excluir esta mensagem?">{% csrf_token %}<button type="submit" class="btn btn-sm btn-red">Excluir</button></form></td>
+        </tr>
+    {% empty %}<tr><td colspan="6"><div class="vazio">Nenhuma mensagem recebida.</div></td></tr>{% endfor %}
+    </tbody>
+</table></div>
+{% endblock %}

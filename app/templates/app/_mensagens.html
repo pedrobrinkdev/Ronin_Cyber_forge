@@ -1,0 +1,7 @@
+{% if messages %}
+<div class="mensagens" role="status" aria-live="polite">
+    {% for message in messages %}
+    <div class="msg {{ message.tags }}"><span class="msg-ico"></span><span class="msg-txt">{{ message }}</span><button type="button" class="msg-x" aria-label="Fechar">×</button></div>
+    {% endfor %}
+</div>
+{% endif %}

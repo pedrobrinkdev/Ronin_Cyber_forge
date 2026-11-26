@@ -1,0 +1,23 @@
+<article class="produto">
+    <div class="foto">
+        <span class="selo">{{ p.get_finalidade_display }}</span>
+        {% if p.imagem %}<img src="{{ p.imagem.url }}" alt="{{ p.nome }}">{% else %}<div class="sem-foto">🗡️</div>{% endif %}
+    </div>
+    <div class="corpo">
+        <div class="meta">{{ p.get_tipo_display }}{% if p.armeiro %} · forjada por {{ p.armeiro.nome }}{% endif %}</div>
+        <h3>{{ p.nome }}</h3>
+        <p class="desc">{{ p.descricao|truncatechars:110 }}</p>
+        <div class="rodape">
+            <span class="preco">R$ {{ p.preco }}</span>
+            {% if p.estoque > 0 %}
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'comprar' p.id %}" class="inline">{% csrf_token %}<button type="submit" class="btn-red btn">Comprar</button></form>
+                {% else %}
+                    <a class="btn btn-red" href="{% url 'login' %}?next={% url 'produtos' %}">Entrar p/ comprar</a>
+                {% endif %}
+            {% else %}
+                <span class="tag off">Esgotado</span>
+            {% endif %}
+        </div>
+    </div>
+</article>

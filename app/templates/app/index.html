@@ -1,0 +1,26 @@
+{% extends "app/base.html" %}
+{% block titulo %}Home{% endblock %}
+{% block conteudo %}
+<section class="hero">
+    <h1>Lâminas forjadas no <em>neon</em></h1>
+    <p>A Ronin Cyber Forge une a tradição dos mestres armeiros do Japão e do mundo à estética do futuro. Katanas, jians e espadas longas — e serviços de afiação, gravação e restauro.</p>
+    <div class="acoes">
+        <a class="btn btn-red" href="{% url 'produtos' %}">Ver arsenal</a>
+        <a class="btn" href="{% url 'quem_somos' %}">Conhecer a forja</a>
+    </div>
+</section>
+
+<div class="recursos">
+    <div class="recurso"><div class="ico">⚔️</div><h3>Arsenal autêntico</h3><p>Katanas, jians, dao, rapieiras e montantes para coleção, treino e corte.</p></div>
+    <div class="recurso"><div class="ico">🔥</div><h3>Forja artesanal</h3><p>Cada lâmina assinada por um armeiro da nossa equipe.</p></div>
+    <div class="recurso"><div class="ico">🛠️</div><h3>Serviços sob medida</h3><p>Afiação, polimento, gravação e bainhas personalizadas.</p></div>
+    <div class="recurso"><div class="ico">🔐</div><h3>Compra segura</h3><p>Crie sua conta, monte o pedido e acompanhe tudo no seu dashboard.</p></div>
+</div>
+
+{% if destaques %}
+<h2>Destaques do arsenal</h2>
+<div class="grade">
+    {% for p in destaques %}{% include "app/_card_produto.html" %}{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "app/base.html" %}
+{% block titulo %}Esqueceu a Senha{% endblock %}
+{% block conteudo %}
+<div class="form-card">
+    <h2>Esqueceu a senha?</h2>
+    <p class="sub">Informe o e-mail da sua conta e enviaremos um link para criar uma nova senha.</p>
+    <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Enviar link</button></form>
+    <div class="links-form"><a href="{% url 'login' %}">Voltar ao login</a></div>
+</div>
+{% endblock %}

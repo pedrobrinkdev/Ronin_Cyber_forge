@@ -1,0 +1,37 @@
+{% extends "app/base.html" %}
+{% block titulo %}Quem Somos{% endblock %}
+{% block conteudo %}
+<h2>Quem somos</h2>
+<section class="sobre">
+    <div class="bloco">
+        <h3>A forja</h3>
+        <p>A <strong>Ronin Cyber Forge</strong> nasceu da ideia de unir a tradição milenar dos armeiros — japoneses, chineses e europeus — com a estética cyberpunk do futuro. Como um ronin sem mestre, trilhamos nosso próprio caminho: lâminas autênticas, vendidas com honra.</p>
+        <p>Vendemos espadas para colecionadores, praticantes de artes marciais e entusiastas, e oferecemos serviços de afiação, polimento, gravação personalizada e restauro.</p>
+    </div>
+    <div class="bloco">
+        <h3>Nosso código</h3>
+        <ul class="valores">
+            <li>Honra: transparência em cada venda</li>
+            <li>Ofício: peças feitas por armeiros dedicados</li>
+            <li>Respeito: segurança e uso responsável das lâminas</li>
+            <li>Inovação: tradição com cara de futuro</li>
+        </ul>
+    </div>
+</section>
+
+<h2>A equipe</h2>
+{% if integrantes %}
+<div class="grade">
+    {% for i in integrantes %}
+    <article class="integrante">
+        {% if i.foto_url %}<img src="{{ i.foto_url }}" alt="Foto de {{ i.nome }}">{% else %}<div class="avatar">🥷</div>{% endif %}
+        <h3>{{ i.nome }}</h3>
+        <div class="cargo">{{ i.cargo }}</div>
+        <p>{{ i.biografia }}</p>
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<div class="vazio">Nenhum integrante para exibir no momento.</div>
+{% endif %}
+{% endblock %}

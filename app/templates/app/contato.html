@@ -1,0 +1,13 @@
+{% extends "app/base.html" %}
+{% block titulo %}Contato{% endblock %}
+{% block conteudo %}
+<div class="form-card largo">
+    <h2>Fale com a forja</h2>
+    <p class="sub">Dúvidas, sugestões ou solicitações — não precisa de login.</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Enviar mensagem</button>
+    </form>
+</div>
+{% endblock %}

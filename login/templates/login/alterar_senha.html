@@ -1,0 +1,9 @@
+{% extends "app/base_painel.html" %}
+{% block titulo %}Alterar Senha{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'perfil' %}">← Voltar ao perfil</a>
+<div class="form-card">
+    <h2>Alterar senha</h2>
+    <form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Alterar senha</button></form>
+</div>
+{% endblock %}

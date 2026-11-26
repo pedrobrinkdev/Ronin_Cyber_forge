@@ -1,0 +1,17 @@
+{% extends "app/base.html" %}
+{% block titulo %}Entrar{% endblock %}
+{% block conteudo %}
+<div class="form-card">
+    <h2>Entrar</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}">{% endif %}
+        <button type="submit">Entrar</button>
+    </form>
+    <div class="links-form">
+        <a href="{% url 'password_reset' %}">Esqueceu a senha?</a>
+        <a href="{% url 'cadastro' %}">Novo usuário? Cadastre-se</a>
+    </div>
+</div>
+{% endblock %}

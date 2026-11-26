@@ -1,0 +1,39 @@
+{% extends "app/base_painel.html" %}
+{% block titulo %}Meus Pedidos{% endblock %}
+{% block conteudo %}
+<a class="voltar" href="{% url 'dashboard' %}">← Voltar ao dashboard</a>
+<div class="painel-topo"><h2>Meus pedidos</h2><a class="btn" href="{% url 'produtos' %}">Continuar comprando</a></div>
+
+<h3 style="margin-bottom:12px">Pedido em andamento</h3>
+{% if carrinho and carrinho.itens.all %}
+<div class="pedido">
+    <div class="tabela-wrap"><table>
+        <thead><tr><th>Produto</th><th>Qtd</th><th>Unitário</th><th>Subtotal</th><th></th></tr></thead>
+        <tbody>
+        {% for item in carrinho.itens.all %}
+            <tr>
+                <td>{{ item.produto.nome }}</td><td>{{ item.quantidade }}</td>
+                <td>R$ {{ item.preco_unitario }}</td><td>R$ {{ item.subtotal }}</td>
+                <td><form method="post" action="{% url 'remover_item' item.id %}" class="inline">{% csrf_token %}<button type="submit" class="btn btn-sm btn-red">Remover</button></form></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table></div>
+    <div class="total">Total: R$ {{ carrinho.total }}</div>
+    <form method="post" action="{% url 'finalizar_pedido' %}" style="text-align:right;margin-top:14px">{% csrf_token %}<button type="submit" class="btn-red">Finalizar pedido</button></form>
+</div>
+{% else %}
+<div class="vazio">Seu carrinho está vazio. <a href="{% url 'produtos' %}">Veja o arsenal</a>.</div>
+{% endif %}
+
+<h3 style="margin:34px 0 12px">Histórico de pedidos</h3>
+{% for pedido in historico %}
+<div class="pedido">
+    <header><strong>Pedido #{{ pedido.id }}</strong><span class="tag on">{{ pedido.get_status_display }}</span><small style="color:var(--muted)">{{ pedido.finalizado_em|date:"d/m/Y H:i" }}</small></header>
+    <ul class="valores">
+        {% for item in pedido.itens.all %}<li>{{ item.quantidade }}x {{ item.produto.nome }} — R$ {{ item.subtotal }}</li>{% endfor %}
+    </ul>
+    <div class="total">Total: R$ {{ pedido.total }}</div>
+</div>
+{% empty %}<div class="vazio">Você ainda não finalizou nenhum pedido.</div>{% endfor %}
+{% endblock %}
