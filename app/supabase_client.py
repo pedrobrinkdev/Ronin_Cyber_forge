@@ -4,10 +4,11 @@ Colunas esperadas: id (int, PK), nome (text), cargo (text), biografia (text), fo
 O cliente é criado só no primeiro uso, assim o site não cai se o Supabase estiver fora/sem chave.
 """
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 TABELA = "integrantes"
 _client = None
